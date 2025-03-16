@@ -75,7 +75,16 @@ const saveDepartment = async () => {
     const departmentData = { name: name.value.trim() };
 
     if (!departmentData.name) {
-      Swal.fire("Error!", "Name is required.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Name is required.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
       return;
     }
 
@@ -83,40 +92,77 @@ const saveDepartment = async () => {
 
     if (isEditMode.value) {
       await api.put(`departments/${editingDepartmentId.value}`, departmentData, config);
-      Swal.fire("Updated!", "Department updated successfully.", "success");
+      Swal.fire({
+        title: "Updated",
+        text: "Department updated successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } else {
       await api.post("departments", departmentData, config);
-      Swal.fire("Created!", "Department added successfully.", "success");
+      Swal.fire({
+        title: "Created",
+        text: "Department added successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
 
     hideModal();
     await refreshTable();
   } catch (error) {
     console.error("Error saving department:", error);
-    Swal.fire("Error!", "Something went wrong.", "error");
+    Swal.fire({
+      title: "Error",
+      text: "Something went wrong.",
+      icon: "error",
+      toast: true,
+      position: "top-right",
+      timer: 5000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    });
   }
 };
 
-// Delete department (with SweetAlert2 confirmation)
+// Delete department (with confirmation)
 const deleteDepartment = async (departmentId) => {
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "This department will be permanently deleted!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!"
-  });
+  const result = confirm("Are you sure? This department will be permanently deleted!");
 
-  if (result.isConfirmed) {
+  if (result) {
     try {
       await api.delete(`departments/${departmentId}`);
       await refreshTable();
-      Swal.fire("Deleted!", "The department has been deleted.", "success");
+      Swal.fire({
+        title: "Deleted",
+        text: "The department has been deleted.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error("Error deleting department:", error);
-      Swal.fire("Error!", "Failed to delete the department.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to delete the department.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
   }
 };

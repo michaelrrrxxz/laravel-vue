@@ -7,80 +7,81 @@ use App\Http\Requests\StoreEnrolledStudentRequest;
 use App\Http\Requests\UpdateEnrolledStudentRequest;
 use App\Imports\StudentsImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\JsonResponse;
+
 class EnrolledStudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $students = EnrolledStudent::all();
         return response()->json($students);
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
+    public function store(StoreEnrolledStudentRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $student = EnrolledStudent::create($validated);
+        return response()->json([
+            'message' => 'Student created successfully',
+            'student' => $student
+        ], 201);
+    }
 
-     public function store(StoreEnrolledStudentRequest $request)
-     {
-         // Validate file type and size
-         $request->validate([
-             'file' => 'required|mimes:xlsx,csv|max:2048',
-         ]);
+    /**
+     * Store a newly created resource in storage via file upload.
+     */
+    public function upload(StoreEnrolledStudentRequest $request): JsonResponse
+    {
+        // Validate file type and size
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:2048',
+        ]);
 
-         try {
-             // Load file and process it
-             $import = new StudentsImport();
-             Excel::import($import, $request->file('file'));
+        try {
+            // Load file and process it
+            $import = new StudentsImport();
+            Excel::import($import, $request->file('file'));
 
-             // Get the import results
-             return response()->json([
-                 'message' => "Upload complete!",
-                 'students_uploaded' => $import->getSuccessCount(),
-                 'duplicates_skipped' => $import->getDuplicateCount(),
-                 'uploaded_students' => $import->getStudents(),
-             ]);
-         } catch (\Exception $e) {
-             return response()->json([
-                 'message' => 'Error processing file',
-                 'error' => $e->getMessage(),
-             ], 500);
-         }
-     }
-
+            // Get the import results
+            return response()->json([
+                'message' => "Upload complete!",
+                'students_uploaded' => $import->getSuccessCount(),
+                'duplicates_skipped' => $import->getDuplicateCount(),
+                'uploaded_students' => $import->getStudents(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error processing file',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
     /**
      * Display the specified resource.
      */
-    public function show(EnrolledStudent $enrolledStudent)
+    public function show(EnrolledStudent $enrolledStudent): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EnrolledStudent $enrolledStudent)
-    {
-        //
+        return response()->json($enrolledStudent);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEnrolledStudentRequest $request, EnrolledStudent $enrolledStudent)
+    public function update(UpdateEnrolledStudentRequest $request, EnrolledStudent $enrolledStudent): JsonResponse
     {
-        //
+        $validated = $request->validated();
+        $enrolledStudent->update($validated);
+        return response()->json([
+            'message' => 'Student updated successfully',
+            'student' => $enrolledStudent
+        ]);
     }
 
     /**
@@ -88,6 +89,9 @@ class EnrolledStudentController extends Controller
      */
     public function destroy(EnrolledStudent $enrolledStudent)
     {
-        //
+        $enrolledStudent->delete();
+        return response()->json([
+            'message' => 'Student deleted successfully'
+        ]);
     }
 }

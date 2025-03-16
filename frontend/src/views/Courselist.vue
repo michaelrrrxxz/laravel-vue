@@ -73,7 +73,16 @@ const saveCourse = async () => {
     const courseData = { name: name.value.trim() };
 
     if (!courseData.name) {
-      Swal.fire("Error!", "Name is required.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Name is required.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
       return;
     }
 
@@ -81,17 +90,44 @@ const saveCourse = async () => {
 
     if (isEditMode.value) {
       await api.put(`courses/${editingCourseId.value}`, courseData, config);
-      Swal.fire("Updated!", "Course updated successfully.", "success");
+      Swal.fire({
+        title: "Updated",
+        text: "Course updated successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } else {
       await api.post("courses", courseData, config);
-      Swal.fire("Created!", "Course added successfully.", "success");
+      Swal.fire({
+        title: "Created",
+        text: "Course added successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
 
     hideModal();
     await refreshTable();
   } catch (error) {
     console.error("Error saving course:", error);
-    Swal.fire("Error!", "Something went wrong.", "error");
+    Swal.fire({
+      title: "Error",
+      text: "Something went wrong.",
+      icon: "error",
+      toast: true,
+      position: "top-right",
+      timer: 5000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    });
   }
 };
 
@@ -111,10 +147,28 @@ const deleteCourse = async (courseId) => {
     try {
       await api.delete(`courses/${courseId}`);
       await refreshTable();
-      Swal.fire("Deleted!", "The course has been deleted.", "success");
+      Swal.fire({
+        title: "Deleted",
+        text: "The course has been deleted.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error("Error deleting course:", error);
-      Swal.fire("Error!", "Failed to delete the course.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to delete the course.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
   }
 };
