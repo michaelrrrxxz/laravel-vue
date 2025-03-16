@@ -22,17 +22,26 @@ const route = useRoute();
 const isActive = (path) => route.path === path;
 
 const menuItems = [
+  // 📌 Core Navigation
   { label: "Dashboard", path: "/dashboard", icon: "fas fa-home" },
+
+  // 👥 User Management
   { label: "Users", path: "/users", icon: "fas fa-users" },
-  { label: "Settings", path: "/settings", icon: "fas fa-cog" },
-  { label: "List", path: "/list", icon: "fas fa-list" },
-  { label: "Questions", path: "/questions", icon: "fas fa-question-circle" },
-  { label: "Results", path: "/results", icon: "fas fa-chart-bar" },
-  { label: "Batch", path: "/batch", icon: "fas fa-layer-group" },
-  { label: "No Exams", path: "/no-exams-list", icon: "fas fa-ban" },
+  { label: "Enrolled Students", path: "/enrolled-students-list", icon: "fas fa-user-graduate" },
+
+  // 🎓 Academic Management
   { label: "Course", path: "/course-list", icon: "fas fa-book" },
   { label: "Department", path: "/department-list", icon: "fas fa-building" },
-  { label: "Enrolled Students", path: "/enrolled-students-list", icon: "fas fa-user-graduate" },
+  { label: "Batch", path: "/batch", icon: "fas fa-layer-group" },
+
+  // 📋 Exams & Results
+  { label: "Questions", path: "/questions", icon: "fas fa-question-circle" },
+  { label: "Results", path: "/results", icon: "fas fa-chart-bar" },
+  { label: "No Exams", path: "/no-exams-list", icon: "fas fa-ban" },
+
+  // 📄 Miscellaneous
+  { label: "List", path: "/list", icon: "fas fa-list" },
+  { label: "Settings", path: "/settings", icon: "fas fa-cog" },
 ];
 
 

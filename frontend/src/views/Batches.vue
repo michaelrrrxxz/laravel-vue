@@ -87,7 +87,16 @@ const saveBatch = async () => {
     const batchData = { name: name.value.trim(), description: description.value.trim() };
 
     if (!batchData.name || !batchData.description) {
-      Swal.fire("Error!", "Name and Description are required.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Name and Description are required.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
       return;
     }
 
@@ -95,10 +104,28 @@ const saveBatch = async () => {
 
     if (isEditMode.value) {
       await api.put(`batch/${editingBatchId.value}`, batchData, config);
-      Swal.fire("Updated!", "Batch updated successfully.", "success");
+      Swal.fire({
+        title: "Updated",
+        text: "Batch updated successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } else {
       await api.post("batch", batchData, config);
-      Swal.fire("Created!", "Batch added successfully.", "success");
+      Swal.fire({
+        title: "Created",
+        text: "Batch added successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
 
     hideModal();
@@ -106,10 +133,28 @@ const saveBatch = async () => {
   } catch (error) {
     if (error.response && error.response.data.errors) {
       console.error("Validation Errors:", error.response.data.errors);
-      Swal.fire("Validation Error!", Object.values(error.response.data.errors).flat().join("\n"), "error");
+      Swal.fire({
+        title: "Validation Error",
+        text: Object.values(error.response.data.errors).flat().join("\n"),
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } else {
       console.error("Error saving batch:", error);
-      Swal.fire("Error!", "Something went wrong.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Something went wrong.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
   }
 };
@@ -130,10 +175,28 @@ const deleteBatch = async (batchId) => {
     try {
       await api.delete(`batch/${batchId}`);
       await refreshTable();
-      Swal.fire("Deleted!", "The batch has been deleted.", "success");
+      Swal.fire({
+        title: "Deleted",
+        text: "The batch has been deleted.",
+        icon: "success",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error("Error deleting batch:", error);
-      Swal.fire("Error!", "Failed to delete the batch.", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to delete the batch.",
+        icon: "error",
+        toast: true,
+        position: "top-right",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
   }
 };
@@ -186,7 +249,7 @@ const refreshTable = async () => {
                   </td>
                 </tr>
                 <tr v-if="batches.length === 0">
-                  <td colspan="2" class="text-center">No batches found.</td>
+                  <td colspan="3" class="text-center">No batches found.</td>
                 </tr>
               </tbody>
             </table>
@@ -209,48 +272,48 @@ const refreshTable = async () => {
 
           <!-- Modal Body -->
           <div class="modal-body">
-  <!-- Show Mode -->
-  <div v-if="selectedBatch">
-    <h4 class="text-primary fw-bold mb-3">{{ selectedBatch.name }}</h4>
-    <p class="fw-semibold">{{ selectedBatch.description }}</p>
+            <!-- Show Mode -->
+            <div v-if="selectedBatch">
+              <h4 class="text-primary fw-bold mb-3">{{ selectedBatch.name }}</h4>
+              <p class="fw-semibold">{{ selectedBatch.description }}</p>
 
-    <!-- 🔥 Highlighted Access Key -->
-    <div class="text-center p-3 rounded"
-         style="background: linear-gradient(135deg, #007bff, #00c6ff); color: white; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);">
-      <h5 class="mb-0">
-        <i class="fa fa-key fa-lg"></i> 
-        <span class="fw-bold ms-1">{{ selectedBatch.access_key }}</span>
-      </h5>
-    </div>
+              <!-- Highlighted Access Key -->
+              <div class="text-center p-3 rounded"
+                style="background: linear-gradient(135deg, #007bff, #00c6ff); color: white; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);">
+                <h5 class="mb-0">
+                  <i class="fa fa-key fa-lg"></i>
+                  <span class="fw-bold ms-1">{{ selectedBatch.access_key }}</span>
+                </h5>
+              </div>
 
-    <!-- 🚦 Highlighted Status (Locked/Active) -->
-    <div class="text-center p-2 rounded mt-3"
-         :style="status === 'locked' 
-                 ? 'background: linear-gradient(135deg, #dc3545, #ff6b6b); color: white;' 
-                 : 'background: linear-gradient(135deg, #28a745, #4caf50); color: white;'">
-      <h5 class="mb-0">
-        <i :class="status === 'locked' ? 'fa fa-lock' : 'fa fa-unlock'"></i>
-        <span class="fw-bold ms-1 text-uppercase">{{ status || 'active' }}</span>
-      </h5>
-    </div>
+              <!-- Highlighted Status (Locked/Active) -->
+              <div class="text-center p-2 rounded mt-3" :style="selectedBatch.status === 'locked'
+                ? 'background: linear-gradient(135deg, #dc3545, #ff6b6b); color: white;'
+                : 'background: linear-gradient(135deg, #28a745, #4caf50); color: white;'">
+                <h5 class="mb-0">
+                  <i :class="selectedBatch.status === 'locked' ? 'fa fa-lock' : 'fa fa-unlock'"></i>
+                  <span class="fw-bold ms-1 text-uppercase">{{ selectedBatch.status || 'active' }}</span>
+                </h5>
+              </div>
 
-    <!-- 🕒 Created & Updated Timestamps -->
-    <div class="d-flex justify-content-between mt-3 text-muted small">
-      <span><i class="fa fa-calendar"></i> Created: {{ new Date(selectedBatch.created_at).toLocaleString() }}</span>
-      <span><i class="fa fa-clock"></i> Updated: {{ new Date(selectedBatch.updated_at).toLocaleString() }}</span>
-    </div>
-  </div>
+              <!-- Created & Updated Timestamps -->
+              <div class="d-flex justify-content-between mt-3 text-muted small">
+                <span><i class="fa fa-calendar"></i> Created: {{ new Date(selectedBatch.created_at).toLocaleString()
+                  }}</span>
+                <span><i class="fa fa-clock"></i> Updated: {{ new Date(selectedBatch.updated_at).toLocaleString()
+                  }}</span>
+              </div>
+            </div>
 
-  <!-- Add/Edit Mode -->
-  <form v-else @submit.prevent="saveBatch">
-    <label class="fw-bold">Name</label>
-    <input type="text" class="form-control mb-2" v-model="name" required />
+            <!-- Add/Edit Mode -->
+            <form v-else @submit.prevent="saveBatch">
+              <label class="fw-bold">Name</label>
+              <input type="text" class="form-control mb-2" v-model="name" required />
 
-    <label class="fw-bold">Description</label>
-    <textarea class="form-control" v-model="description"></textarea>
-  </form>
-</div>
-
+              <label class="fw-bold">Description</label>
+              <textarea class="form-control" v-model="description"></textarea>
+            </form>
+          </div>
 
           <!-- Modal Footer -->
           <div class="modal-footer">

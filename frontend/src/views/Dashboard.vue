@@ -18,9 +18,9 @@
         />
 
         <CountCard
-          :count="150"
-          title="New Orders"
-          icon="fas fa-shopping-bag"
+          :count="enrolledStudentCount"
+          title="Enrolled Students"
+          icon="fas fa-user-graduate"
           bgColor="bg-info"
         />
 
@@ -39,6 +39,7 @@
 import api from "@/api/axiosInstance";
 import CountCard from "@/components/CountCard.vue";
 
+
 export default {
   components: {
     CountCard
@@ -55,6 +56,7 @@ export default {
         const response = await api.get("/dashboard");
         this.userCount = response.data["user-count"];
         this.batchCount = response.data["batch-count"];
+        this.enrolledStudentCount = response.data["enrolled-student-count"];
       } catch (error) {
         console.error("Error fetching counts:", error);
       }

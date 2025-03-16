@@ -10,26 +10,25 @@
       <div class="user-panel d-flex align-items-center">
         <div class="image">
           <img 
-            v-if="user?.avatar" 
-            :src="user.avatar" 
+            :src="userAvatar" 
             class="img-circle elevation-2" 
             alt="User Avatar"
           />
-          <img 
-            v-else 
-            src="https://via.placeholder.com/40" 
-            class="img-circle elevation-2" 
-            alt="Default Avatar"
-          />
         </div>
-        <div class="info dropdown">
-          <div class="user-info" @mouseover="showEmail = true" @mouseleave="showEmail = false">
+        <div class="info">
+          <div 
+            class="user-info" 
+            @mouseover="showEmail = true" 
+            @mouseleave="showEmail = false"
+          >
             <a href="#" class="d-block user-name">
               {{ user?.name || "Guest" }}
             </a>
-            <div v-if="showEmail" class="email-tooltip">
-              {{ user?.email || "No email available" }}
-            </div>
+            <transition name="fade">
+              <div v-if="showEmail" class="email-tooltip">
+                {{ user?.email || "No email available" }}
+              </div>
+            </transition>
           </div>
         </div>
       </div>
@@ -53,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import SidebarMenu from "./SidebarMenu.vue";
 
 const searchQuery = ref("");
@@ -61,16 +60,24 @@ const user = ref(null);
 const showEmail = ref(false);
 
 onMounted(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    try {
-      user.value = JSON.parse(storedUser);
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-      user.value = null;
-    }
-  }
+  user.value = getUserFromLocalStorage();
 });
+
+// Computed property for user avatar
+const userAvatar = computed(() => 
+  user.value?.avatar || "https://via.placeholder.com/40"
+);
+
+// Function to get user data from local storage
+function getUserFromLocalStorage() {
+  try {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  } catch (error) {
+    console.error("Error parsing user data:", error);
+    return null;
+  }
+}
 </script>
 
 <style scoped>
@@ -124,13 +131,13 @@ onMounted(() => {
   border-radius: 5px;
   font-size: 0.9rem;
   z-index: 1000;
-  opacity: 0;
-  transform: translateY(-5px);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-.user-info:hover .email-tooltip {
-  opacity: 1;
-  transform: translateY(0);
+/* Smooth tooltip transition */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>
