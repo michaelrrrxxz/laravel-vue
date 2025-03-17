@@ -58,3 +58,4 @@ route::apiResource('question', QuestionController::class);
 
 
 route::get('dashboard', [DashboardController::class, 'index']);
+route::post('enrolledstudent', [EnrolledStudentController::class, 'upload']);

@@ -12,6 +12,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+        'vue-filepond': 'vue-filepond/dist/vue-filepond.js',
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },

@@ -38,7 +38,7 @@ onMounted(async () => {
 // Fetch questions
 const fetchQuestions = async () => {
   try {
-    const response = await api.get("question");
+    const response = await api.get("questions");
     questions.value = response.data;
   } catch (error) {
     console.error("Error fetching questions:", error);
@@ -70,20 +70,18 @@ const hideModal = () => {
 // Handle file upload
 const handleFileUpload = (event, field) => {
   const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      switch (field) {
-        case "questionImage": questionImage.value = reader.result; break;
-        case "optionAImage": optionAImage.value = reader.result; break;
-        case "optionBImage": optionBImage.value = reader.result; break;
-        case "optionCImage": optionCImage.value = reader.result; break;
-        case "optionDImage": optionDImage.value = reader.result; break;
-        case "optionEImage": optionEImage.value = reader.result; break;
-      }
-    };
-    reader.readAsDataURL(file);
-  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    switch (field) {
+      case "questionImage": questionImage.value = reader.result; break;
+      case "optionAImage": optionAImage.value = reader.result; break;
+      case "optionBImage": optionBImage.value = reader.result; break;
+      case "optionCImage": optionCImage.value = reader.result; break;
+      case "optionDImage": optionDImage.value = reader.result; break;
+      case "optionEImage": optionEImage.value = reader.result; break;
+    }
+  };
+  reader.readAsDataURL(file);
 };
 
 // Reset form
@@ -135,17 +133,111 @@ const saveQuestion = async () => {
 
     if (isEditMode.value) {
       await api.put(`questions/${editingQuestionId.value}`, formData, config);
-      Swal.fire("Updated!", "Question updated successfully.", "success");
+      Swal.fire({
+        title: "Updated!",
+        text: "Question updated successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-left",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } else {
       await api.post("questions", formData, config);
-      Swal.fire("Created!", "Question added successfully.", "success");
+      Swal.fire({
+        title: "Created!",
+        text: "Question added successfully.",
+        icon: "success",
+        toast: true,
+        position: "top-left",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
 
     hideModal();
     await fetchQuestions();
   } catch (error) {
     console.error("Error saving question:", error);
-    Swal.fire("Error!", "Something went wrong.", "error");
+    Swal.fire({
+      title: "Error!",
+      text: "Something went wrong.",
+      icon: "error",
+      toast: true,
+      position: "top-left",
+      timer: 5000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    });
+  }
+};
+
+// Edit question
+const editQuestion = (question) => {
+  resetForm();
+  testType.value = question.test_type;
+  questionText.value = question.question;
+  questionImage.value = question.question_image;
+  optionA.value = question.option_a;
+  optionAImage.value = question.option_a_image;
+  optionB.value = question.option_b;
+  optionBImage.value = question.option_b_image;
+  optionC.value = question.option_c;
+  optionCImage.value = question.option_c_image;
+  optionD.value = question.option_d;
+  optionDImage.value = question.option_d_image;
+  optionE.value = question.option_e;
+  optionEImage.value = question.option_e_image;
+  optionCorrect.value = question.option_correct;
+  ctype.value = question.ctype;
+  isDeleted.value = question.isDeleted;
+  courseId.value = question.courseId;
+  isEditMode.value = true;
+  editingQuestionId.value = question.id;
+  nextTick(() => openModal());
+};
+
+// Delete question
+const deleteQuestion = async (questionId) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "This question will be permanently deleted!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!"
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await api.delete(`questions/${questionId}`);
+      await fetchQuestions();
+      Swal.fire({
+        title: "Deleted!",
+        text: "The question has been deleted.",
+        icon: "success",
+        toast: true,
+        position: "top-left",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error("Error deleting question:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete the question.",
+        icon: "error",
+        toast: true,
+        position: "top-left",
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
+    }
   }
 };
 </script>
@@ -228,11 +320,44 @@ const saveQuestion = async () => {
             <input type="text" class="form-control mb-2" v-model="questionText" />
             <input type="file" class="form-control mb-2" @change="(e) => handleFileUpload(e, 'questionImage')" />
 
+            <label>Option A (Text or Image)</label>
+            <input type="text" class="form-control mb-2" v-model="optionA" />
+            <input type="file" class="form-control mb-2" @change="(e) => handleFileUpload(e, 'optionAImage')" />
+
+            <label>Option B (Text or Image)</label>
+            <input type="text" class="form-control mb-2" v-model="optionB" />
+            <input type="file" class="form-control mb-2" @change="(e) => handleFileUpload(e, 'optionBImage')" />
+
+            <label>Option C (Text or Image)</label>
+            <input type="text" class="form-control mb-2" v-model="optionC" />
+            <input type="file" class="form-control mb-2" @change="(e) => handleFileUpload(e, 'optionCImage')" />
+
+            <label>Option D (Text or Image)</label>
+            <input type="text" class="form-control mb-2" v-model="optionD" />
+            <input type="file" class="form-control mb-2" @change="(e) => handleFileUpload(e, 'optionDImage')" />
+
+            <label>Option E (Text or Image)</label>
+            <input type="text" class="form-control mb-2" v-model="optionE" />
+            <input type="file" class="form-control mb-2" @change="(e) => handleFileUpload(e, 'optionEImage')" />
+
             <label>Option Correct</label>
             <input type="text" class="form-control mb-2" v-model="optionCorrect" required />
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="hideModal">Close</button>
+            <button class="btn btn-success" @click="saveQuestion">
+              {{ isEditMode ? "Update" : "Submit" }}
+            </button>
           </div>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<style>
+.content-card {
+  margin-top: 20px;
+}
+</style>
