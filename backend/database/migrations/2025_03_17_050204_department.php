@@ -16,6 +16,15 @@ return new class extends Migration
             $table->string("name")->unique();
             $table->timestamps();
         });
+
+        Schema::create('enrolled_students', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('course');
+            $table->string('id_number')->unique();
+            $table->string('gender');
+            $table->timestamps();
+        });
     }
 
 

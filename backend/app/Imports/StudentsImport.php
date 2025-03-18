@@ -28,7 +28,7 @@ class StudentsImport implements ToModel, WithHeadingRow
             'name'       => $row['name'],
             'course'     => $row['course'],
             'id_number'=> $row['id_number'],
-            'gender'=> $row['sex'],
+            'gender'=> $row['sex']??'',
         ]);
 
         $this->successCount++;
